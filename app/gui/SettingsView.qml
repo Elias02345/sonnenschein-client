@@ -833,6 +833,21 @@ Flickable {
                     }
 
                     CheckBox {
+                        id: remoteDesktopCheck
+                        hoverEnabled: true
+                        text: qsTr("Remote Desktop mode")
+                        font.pointSize: 12
+                        checked: StreamingPreferences.remoteDesktopMode
+                        onCheckedChanged: {
+                            StreamingPreferences.remoteDesktopMode = checked
+                        }
+                        ToolTip.delay: 1000
+                        ToolTip.timeout: 5000
+                        ToolTip.visible: hovered
+                        ToolTip.text: qsTr("Optimizes the session for using the host like a computer: streams in a window with a normal (absolute) mouse cursor instead of fullscreen game capture. Ideal for the desktop; games are better with this off.")
+                    }
+
+                    CheckBox {
                         id: framePacingCheck
                         hoverEnabled: true
                         text: qsTr("Frame pacing")
