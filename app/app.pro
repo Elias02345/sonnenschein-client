@@ -205,6 +205,7 @@ SOURCES += \
     streaming/video/overlaymanager.cpp \
     backend/systemproperties.cpp \
     backend/autoconfig.cpp \
+    backend/hostlibrary.cpp \
     wm.cpp
 
 HEADERS += \
@@ -243,7 +244,8 @@ HEADERS += \
     gui/sdlgamepadkeynavigation.h \
     streaming/video/overlaymanager.h \
     backend/systemproperties.h \
-    backend/autoconfig.h
+    backend/autoconfig.h \
+    backend/hostlibrary.h
 
 # Platform-specific renderers and decoders
 ffmpeg {

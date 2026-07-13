@@ -52,6 +52,10 @@
 #include "backend/computermanager.h"
 #include "backend/systemproperties.h"
 #include "backend/autoconfig.h"
+#include "backend/hostlibrary.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include "streaming/session.h"
 #include "settings/streamingpreferences.h"
 #include "gui/sdlgamepadkeynavigation.h"
@@ -816,6 +820,7 @@ int main(int argc, char *argv[])
     switch (commandLineParserResult) {
     case GlobalCommandLineParser::ListRequested:
     case GlobalCommandLineParser::DetectProfileRequested:
+    case GlobalCommandLineParser::LibraryRequested:
         // Don't log to the console since it will jumble the command output
         s_SuppressVerboseOutput = true;
         break;
@@ -1006,6 +1011,53 @@ int main(int argc, char *argv[])
             fprintf(stdout, "%s\n", AutoConfig::toJson(profile).toUtf8().constData());
             fflush(stdout);
             return profile.valid ? 0 : 1;
+        }
+    case GlobalCommandLineParser::LibraryRequested:
+        {
+            // Sonnenschein: fetch a host's Steam library via the Web API and
+            // print it as JSON. Verifiable headless against a running host.
+            //   library <host> --user <u> --pass <p> [--port <n>]
+            QStringList a = app.arguments();
+            QString host, user, pass;
+            quint16 port = 47990;
+            int li = a.indexOf("library");
+            for (int i = li + 1; i < a.size(); i++) {
+                const QString& t = a.at(i);
+                if (t == "--user" && i + 1 < a.size()) user = a.at(++i);
+                else if (t == "--pass" && i + 1 < a.size()) pass = a.at(++i);
+                else if (t == "--port" && i + 1 < a.size()) port = a.at(++i).toUShort();
+                else if (!t.startsWith("--") && host.isEmpty()) host = t;
+            }
+            if (host.isEmpty()) {
+                fprintf(stderr, "usage: sonnenschein-client library <host> --user <u> --pass <p> [--port <n>]\n");
+                return 1;
+            }
+            HostLibrary lib(host, port);
+            if (!user.isEmpty() && !lib.login(user, pass)) {
+                fprintf(stderr, "login failed: %s\n", lib.lastError().toUtf8().constData());
+                return 1;
+            }
+            bool ok = false;
+            QList<HostLibrary::Game> games = lib.fetchLibrary(&ok);
+            if (!ok) {
+                fprintf(stderr, "library fetch failed: %s\n", lib.lastError().toUtf8().constData());
+                return 1;
+            }
+            QJsonArray arr;
+            for (const HostLibrary::Game& g : games) {
+                QJsonObject o;
+                o["appid"] = g.appid;
+                o["name"] = g.name;
+                o["installed"] = g.installed;
+                arr.append(o);
+            }
+            QJsonObject root;
+            root["steam_found"] = lib.steamFound();
+            root["count"] = static_cast<int>(games.size());
+            root["games"] = arr;
+            fprintf(stdout, "%s\n", QJsonDocument(root).toJson(QJsonDocument::Indented).constData());
+            fflush(stdout);
+            return 0;
         }
     case GlobalCommandLineParser::NormalStartRequested:
         initialView = "qrc:/gui/PcView.qml";
