@@ -60,9 +60,27 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           path: artifacts
+      - name: Package artifacts into single files
+        shell: bash
+        run: |
+          mkdir -p release
+          for d in artifacts/*/; do
+            name="$(basename "$d")"
+            # Single-file artifacts (AppImage / dmg) go through as-is; multi-file
+            # bundles (the Windows app dir) are zipped into one archive so the
+            # Release has a handful of clean downloads, not hundreds of loose DLLs.
+            if ls "$d"*.AppImage >/dev/null 2>&1; then
+              cp "$d"*.AppImage release/
+            elif ls "$d"*.dmg >/dev/null 2>&1; then
+              cp "$d"*.dmg release/
+            else
+              ( cd "$d" && zip -qr "$OLDPWD/release/${name}.zip" . )
+            fi
+          done
+          ls -la release
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
+          files: release/*
           generate_release_notes: true
           fail_on_unmatched_files: false
