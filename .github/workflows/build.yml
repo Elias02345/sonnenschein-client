@@ -32,11 +32,14 @@ jobs:
     with:
       ci_version: ${{ needs.setup.outputs.ci_version }}
 
-  build-steamlink:
-    needs: setup
-    uses: ./.github/workflows/build-steamlink.yml
-    with:
-      ci_version: ${{ needs.setup.outputs.ci_version }}
+  # Sonnenschein: Steam Link is discontinued hardware and not a target for the
+  # Sonnenschein client — its build broke on the rebrand and only added noise.
+  # Disabled. (build-steamlink.yml is kept in the tree for reference.)
+  # build-steamlink:
+  #   needs: setup
+  #   uses: ./.github/workflows/build-steamlink.yml
+  #   with:
+  #     ci_version: ${{ needs.setup.outputs.ci_version }}
 
   build-windows-macos:
     needs: setup

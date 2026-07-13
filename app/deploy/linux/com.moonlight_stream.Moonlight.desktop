@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Moonlight
-Comment=Stream games and other applications from another PC running Sunshine or GeForce Experience
-Exec=moonlight
+Name=Sonnenschein Client
+Comment=Stream games and the desktop from a Sonnenschein/Sunshine/Apollo host
+Exec=sonnenschein-client
 Icon=moonlight
 Terminal=false
 Type=Application
