@@ -848,6 +848,22 @@ Flickable {
                     }
 
                     CheckBox {
+                        id: remoteDesktopAbsoluteCheck
+                        hoverEnabled: true
+                        text: qsTr("    Absolute mode (take over the whole setup)")
+                        font.pointSize: 12
+                        enabled: StreamingPreferences.remoteDesktopMode
+                        checked: StreamingPreferences.remoteDesktopMode && StreamingPreferences.remoteDesktopAbsolute
+                        onCheckedChanged: {
+                            StreamingPreferences.remoteDesktopAbsolute = checked
+                        }
+                        ToolTip.delay: 1000
+                        ToolTip.timeout: 8000
+                        ToolTip.visible: hovered
+                        ToolTip.text: qsTr("On: take over the whole host setup fullscreen (for multi-monitor workstations; multiple virtual screens with auto-alignment is a planned host feature). Off: Single-Monitor mode — show the host on one client monitor in a window and keep using this computer alongside.")
+                    }
+
+                    CheckBox {
                         id: framePacingCheck
                         hoverEnabled: true
                         text: qsTr("Frame pacing")

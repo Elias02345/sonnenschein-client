@@ -549,8 +549,9 @@ bool Session::populateDecoderProperties(SDL_Window* window)
 
 Session::Session(NvComputer* computer, NvApp& app, StreamingPreferences *preferences)
     : m_Preferences(preferences ? preferences : StreamingPreferences::get()),
-      // Sonnenschein: Remote-Desktop profile forces a window (never fullscreen).
-      m_IsFullScreen(!m_Preferences->remoteDesktopMode && (m_Preferences->windowMode != StreamingPreferences::WM_WINDOWED || !WMUtils::isRunningDesktopEnvironment())),
+      // Sonnenschein: Remote-Desktop — Single-Monitor mode runs in a window
+      // (use the client alongside); Absolute mode takes over fullscreen.
+      m_IsFullScreen(m_Preferences->remoteDesktopMode ? m_Preferences->remoteDesktopAbsolute : (m_Preferences->windowMode != StreamingPreferences::WM_WINDOWED || !WMUtils::isRunningDesktopEnvironment())),
       m_Computer(computer),
       m_App(app),
       m_Window(nullptr),

@@ -121,9 +121,14 @@ public:
     Q_PROPERTY(bool enableMdns MEMBER enableMdns NOTIFY enableMdnsChanged)
     Q_PROPERTY(bool quitAppAfter MEMBER quitAppAfter NOTIFY quitAppAfterChanged)
     Q_PROPERTY(bool absoluteMouseMode MEMBER absoluteMouseMode NOTIFY absoluteMouseModeChanged)
-    // Sonnenschein: Remote-Desktop profile — stream the host desktop in a
-    // window with mouse/keyboard-first controls (windowed + absolute mouse).
+    // Sonnenschein: Remote-Desktop profile — use the host like a computer.
+    // remoteDesktopMode = on/off; remoteDesktopAbsolute picks the flavour:
+    //   false = Single-Monitor (windowed, keep using the client alongside)
+    //   true  = Absolute (take over the whole setup; fullscreen, multi-display
+    //           is the RD-2 host feature). Both deactivate the host's physical
+    //           displays and stream client-matched virtual display(s).
     Q_PROPERTY(bool remoteDesktopMode MEMBER remoteDesktopMode NOTIFY remoteDesktopModeChanged)
+    Q_PROPERTY(bool remoteDesktopAbsolute MEMBER remoteDesktopAbsolute NOTIFY remoteDesktopModeChanged)
     Q_PROPERTY(bool absoluteTouchMode MEMBER absoluteTouchMode NOTIFY absoluteTouchModeChanged)
     Q_PROPERTY(bool framePacing MEMBER framePacing NOTIFY framePacingChanged)
     Q_PROPERTY(bool connectionWarnings MEMBER connectionWarnings NOTIFY connectionWarningsChanged)
@@ -166,6 +171,7 @@ public:
     bool quitAppAfter;
     bool absoluteMouseMode;
     bool remoteDesktopMode;
+    bool remoteDesktopAbsolute;
     bool absoluteTouchMode;
     bool framePacing;
     bool connectionWarnings;
