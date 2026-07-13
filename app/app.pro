@@ -2,7 +2,7 @@ QT += core quick network quickcontrols2 svg
 CONFIG += c++17
 
 unix:!macx {
-    TARGET = moonlight
+    TARGET = sonnenschein-client
 } else {
     # On macOS, this is the name displayed in the global menu bar
     TARGET = Moonlight
@@ -204,6 +204,7 @@ SOURCES += \
     gui/sdlgamepadkeynavigation.cpp \
     streaming/video/overlaymanager.cpp \
     backend/systemproperties.cpp \
+    backend/autoconfig.cpp \
     wm.cpp
 
 HEADERS += \
@@ -241,7 +242,8 @@ HEADERS += \
     settings/mappingmanager.h \
     gui/sdlgamepadkeynavigation.h \
     streaming/video/overlaymanager.h \
-    backend/systemproperties.h
+    backend/systemproperties.h \
+    backend/autoconfig.h
 
 # Platform-specific renderers and decoders
 ffmpeg {

@@ -171,6 +171,9 @@ private:
 
     void updateOptimalWindowDisplayMode();
 
+    // Sonnenschein: exposed publicly so AutoConfig can probe per-codec
+    // hardware-decode availability for device-profile auto-configuration.
+public:
     enum class DecoderAvailability {
         None,
         Software,
@@ -182,6 +185,7 @@ private:
                                                StreamingPreferences::VideoDecoderSelection vds,
                                                int videoFormat, int width, int height, int frameRate);
 
+private:
     static
     bool chooseDecoder(StreamingPreferences::VideoDecoderSelection vds,
                        SDL_Window* window, int videoFormat, int width, int height,

@@ -51,6 +51,7 @@
 #include "backend/autoupdatechecker.h"
 #include "backend/computermanager.h"
 #include "backend/systemproperties.h"
+#include "backend/autoconfig.h"
 #include "streaming/session.h"
 #include "settings/streamingpreferences.h"
 #include "gui/sdlgamepadkeynavigation.h"
@@ -428,9 +429,12 @@ int main(int argc, char *argv[])
     // Set these here to allow us to use the default QSettings constructor.
     // These also ensure that our cache directory is named correctly. As such,
     // it is critical that these be called before Path::initialize().
-    QCoreApplication::setOrganizationName("Moonlight Game Streaming Project");
-    QCoreApplication::setOrganizationDomain("moonlight-stream.com");
-    QCoreApplication::setApplicationName("Moonlight");
+    // Sonnenschein-Client: eigene Settings-/Cache-Identität, damit die Config
+    // getrennt von einer echten Moonlight-Installation liegt (eigenes Pairing,
+    // eigene Geräteprofile). Upstream-Kompatibilität des Protokolls bleibt.
+    QCoreApplication::setOrganizationName("Sonnenschein");
+    QCoreApplication::setOrganizationDomain("github.com/Elias02345/sonnenschein");
+    QCoreApplication::setApplicationName("sonnenschein-client");
 
     if (QFile(QDir::currentPath() + "/portable.dat").exists()) {
         QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -811,6 +815,7 @@ int main(int argc, char *argv[])
     GlobalCommandLineParser::ParseResult commandLineParserResult = parser.parse(app.arguments());
     switch (commandLineParserResult) {
     case GlobalCommandLineParser::ListRequested:
+    case GlobalCommandLineParser::DetectProfileRequested:
         // Don't log to the console since it will jumble the command output
         s_SuppressVerboseOutput = true;
         break;
@@ -992,6 +997,16 @@ int main(int argc, char *argv[])
     bool hasGUI = true;
 
     switch (commandLineParserResult) {
+    case GlobalCommandLineParser::DetectProfileRequested:
+        {
+            // Sonnenschein: detect this device's optimal streaming profile and
+            // print it as JSON. Fully local (no host needed) — used to verify
+            // the auto-configuration against real hardware.
+            AutoConfig::DeviceProfile profile = AutoConfig::detectProfile();
+            fprintf(stdout, "%s\n", AutoConfig::toJson(profile).toUtf8().constData());
+            fflush(stdout);
+            return profile.valid ? 0 : 1;
+        }
     case GlobalCommandLineParser::NormalStartRequested:
         initialView = "qrc:/gui/PcView.qml";
         break;
