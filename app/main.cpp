@@ -53,6 +53,7 @@
 #include "backend/systemproperties.h"
 #include "backend/autoconfig.h"
 #include "backend/hostlibrary.h"
+#include "backend/hostlibrarymodel.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -1058,6 +1059,30 @@ int main(int argc, char *argv[])
             fprintf(stdout, "%s\n", QJsonDocument(root).toJson(QJsonDocument::Indented).constData());
             fflush(stdout);
             return 0;
+        }
+    case GlobalCommandLineParser::LibraryGuiRequested:
+        {
+            // Sonnenschein: open the host-library cover grid directly (deep
+            // link, used to test the view without navigating the whole app):
+            //   library-gui <host> --user <u> --pass <p> [--port <n>]
+            QStringList a = app.arguments();
+            QString host, user, pass;
+            quint16 port = 47990;
+            int li = a.indexOf("library-gui");
+            for (int i = li + 1; i < a.size(); i++) {
+                const QString& t = a.at(i);
+                if (t == "--user" && i + 1 < a.size()) user = a.at(++i);
+                else if (t == "--pass" && i + 1 < a.size()) pass = a.at(++i);
+                else if (t == "--port" && i + 1 < a.size()) port = a.at(++i).toUShort();
+                else if (!t.startsWith("--") && host.isEmpty()) host = t;
+            }
+            HostLibraryModel* libModel = new HostLibraryModel(&app);
+            if (!host.isEmpty()) {
+                libModel->load(host, port, user, pass);
+            }
+            engine.rootContext()->setContextProperty("libraryModel", libModel);
+            initialView = "qrc:/gui/LibraryView.qml";
+            break;
         }
     case GlobalCommandLineParser::NormalStartRequested:
         initialView = "qrc:/gui/PcView.qml";

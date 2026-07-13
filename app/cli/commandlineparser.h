@@ -16,6 +16,7 @@ public:
         ListRequested,
         DetectProfileRequested,
         LibraryRequested,
+        LibraryGuiRequested,
     };
 
     GlobalCommandLineParser();

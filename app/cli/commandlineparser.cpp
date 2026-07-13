@@ -198,6 +198,8 @@ GlobalCommandLineParser::ParseResult GlobalCommandLineParser::parse(const QStrin
                 return DetectProfileRequested;
             } else if (action == "library") {
                 return LibraryRequested;
+            } else if (action == "library-gui") {
+                return LibraryGuiRequested;
             }
         }
 

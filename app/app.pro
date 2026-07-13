@@ -206,6 +206,7 @@ SOURCES += \
     backend/systemproperties.cpp \
     backend/autoconfig.cpp \
     backend/hostlibrary.cpp \
+    backend/hostlibrarymodel.cpp \
     wm.cpp
 
 HEADERS += \
@@ -245,7 +246,8 @@ HEADERS += \
     streaming/video/overlaymanager.h \
     backend/systemproperties.h \
     backend/autoconfig.h \
-    backend/hostlibrary.h
+    backend/hostlibrary.h \
+    backend/hostlibrarymodel.h
 
 # Platform-specific renderers and decoders
 ffmpeg {
